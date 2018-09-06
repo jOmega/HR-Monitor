@@ -1,48 +1,46 @@
 import processing.serial.*;
 
-int SERIAL_PORT = 0;
-int FPS = 30;
+int PORT_NUMBER = 3;
+int FPS = 25;
 
-float oldReading = 0;
-float newReading = 0;
-int xCoord = 0;
+int xCoord = 1;
+float previousHeartRateHeight = 0;
 
 Serial serialPort;
 
 void setup(){
-  serialPort = new Serial(this, Serial.list()[SERIAL_PORT], 9600);
-  printArray(Serial.list());
+  size(600, 400);
+  frameRate(25);
   
-  size(800, 400);
+  stroke(0, 255, 0);
   background(0);
-  frameRate(FPS);
-}
-
-void serialEvent(Serial serialPort){
-  String serialReading = serialPort.readStringUntil('\n');
   
-  if (serialReading == null){
-    background(0);
-    xCoord++;
-  }
-  
-  else {
-    newReading = float(trim(serialReading));
-    println(newReading);
-    
-    float pulseHeight = map(newReading, 0, 1023, 0, 400);
-    stroke(0, 225, 0);
-    line(xCoord - 1, height - oldReading, xCoord, height - pulseHeight);
-    oldReading = newReading;
-    
-    if (xCoord >= 700){
-      xCoord = 0;
-    }
-    
-    xCoord++;
-  }
-  
+  printArray(Serial.list());
+  serialPort = new Serial(this, Serial.list()[PORT_NUMBER], 9600);
 }
 
 void draw(){
+}
+
+void serialEvent(Serial serialPort){
+  String newValue = serialPort.readStringUntil('\n');
+  
+  if (newValue != null){
+    int currentHeartRateReading = trim(newValue);
+    println(currentHeartRateReading);
+    
+    float currentHeartRateHeight = map(currentHeartRateReading, 0, 1023, 0, height);
+    
+    line(xCoord - 1, height - previousHeartRateHeight, xCoord, height - currentHeartRateHeight);
+    previousHeartRateHeight = currentHeartRateHeight;
+    
+    if (xCoord >= width){
+      xCoord = 0;
+      background(0);
+    }
+  }
+  
+  else {
+    xCoord++;
+  }
 }
