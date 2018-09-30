@@ -26,10 +26,10 @@ void serialEvent(Serial serialPort){
   String newValue = serialPort.readStringUntil('\n');
   
   if (newValue != null){
-    int currentHeartRateReading = trim(newValue);
+    String currentHeartRateReading = trim(newValue);
     println(currentHeartRateReading);
     
-    float currentHeartRateHeight = map(currentHeartRateReading, 0, 1023, 0, height);
+    float currentHeartRateHeight = map(int(currentHeartRateReading), 0, 1023, 0, height);
     
     line(xCoord - 1, height - previousHeartRateHeight, xCoord, height - currentHeartRateHeight);
     previousHeartRateHeight = currentHeartRateHeight;
@@ -38,9 +38,9 @@ void serialEvent(Serial serialPort){
       xCoord = 0;
       background(0);
     }
-  }
   
-  else {
-    xCoord++;
+    else {
+      xCoord++;
   }
+ }
 }
