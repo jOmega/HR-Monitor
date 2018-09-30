@@ -7,6 +7,7 @@ int xCoord = 1;
 float previousHeartRateHeight = 0;
 
 Serial serialPort;
+PrintWriter testValues;
 
 void setup(){
   size(600, 400);
@@ -17,6 +18,8 @@ void setup(){
   
   printArray(Serial.list());
   serialPort = new Serial(this, Serial.list()[PORT_NUMBER], 9600);
+  
+  testValues = createWriter("testValues.txt");
 }
 
 void draw(){
@@ -27,7 +30,8 @@ void serialEvent(Serial serialPort){
   
   if (newValue != null){
     String currentHeartRateReading = trim(newValue);
-    println(currentHeartRateReading);
+    testValues.println(currentHeartRateReading + " " + millis());
+    println(currentHeartRateReading + " " + millis());
     
     float currentHeartRateHeight = map(int(currentHeartRateReading), 0, 1023, 0, height);
     
